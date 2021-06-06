@@ -140,9 +140,9 @@ enum layers_keymap {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // TODO: Replace KC_RCTL with an additional language selector.
   [_QWERTY] = LAYOUT_eighty_m80h(
-    KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,   KC_F11,     KC_F12,     KC_BSPC,    KC_VOLU, KC_VOLD, KC_BRK,
-    KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,     KC_MINS,    KC_EQL,                 KC_PGUP, KC_MPLY, KC_HOME,
-    KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,     KC_LBRC,    KC_RBRC,    KC_BSLS,    KC_PGDN, KC_LLCK, KC_END,
+    KC_GESC, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,   KC_F11,     KC_F12,     KC_BSPC,    KC_VOLU, KC_VOLD, KC_BRK,
+    KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,     KC_MINS,    KC_EQL,                 KC_HOME, KC_MPLY, KC_PGUP,
+    KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,     KC_LBRC,    KC_RBRC,    KC_BSLS,    KC_END,  KC_PENT, KC_PGDN,
     KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,  KC_QUOT,    KC_ENT,
     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,              KC_RSFT,                         KC_UP,
     KC_LCTL, KC_LALT, KC_LGUI,                   KC_SPC,                                      MO_FN,    KC_GREEK,   KC_CADET,   KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT),
@@ -219,14 +219,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * clicks the mouse, and SHIFT+CADET+FIVE right-clicks.
    */
   [_CADET] = LAYOUT_eighty_m80h(
-    KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,   KC_F11,     KC_F12,     KC_BSPC,    KC_VOLU, KC_VOLD, KC_BRK,
+    KC_GESC, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,   KC_F11,     KC_F12,     KC_BSPC,    KC_VOLU, KC_VOLD, KC_BRK,
     H(00AC), _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,     H(00b1),                _______, H(00d7), _______,
     _______, H(2227), H(2228), H(2229), H(222a), H(2282), H(2283), H(2200), H(221e), H(2203), H(2202),  H(2208),    XXXXXXX,    XXXXXXX,    _______, _______, _______,
     _______, H(22a5), H(22a4), H(22a2), H(22a3), H(2191), H(2193), H(2190), H(2192), H(2194), XXXXXXX,  XXXXXXX,    _______,
     _______, XXXXXXX, H(2260), XXXXXXX, H(2248), H(2261), H(2264), H(2265), XXXXXXX, XXXXXXX, H(00f7),              _______,                         _______,
     _______, _______, _______,                   _______,                                     _______,  _______,    _______,    _______,    _______, _______, _______),
   [_SHIFTCADET] = LAYOUT_eighty_m80h(
-    KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,   KC_F11,     KC_F12,     KC_BSPC,    KC_VOLU, KC_VOLD, KC_BRK,
+    KC_GESC, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,   KC_F11,     KC_F12,     KC_BSPC,    KC_VOLU, KC_VOLD, KC_BRK,
     H(2205), H(00a1), XXXXXXX, H(00a3), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,  XXXXXXX,    H(2213),                _______, _______, _______,
     _______, H(211a), XXXXXXX, XXXXXXX, H(211d), H(2286), H(2287), XXXXXXX, H(2135), H(2204), XXXXXXX,  H(2209),    XXXXXXX,    XXXXXXX,    _______, _______, _______,
     _______, H(212b), XXXXXXX, H(2207), XXXXXXX, H(21d1), H(21d3), H(21d0), H(21d2), H(21d4), XXXXXXX,  XXXXXXX,    _______,
@@ -236,7 +236,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Function layer is mostly for keyboard meta-control operations, but also contains the combining
   // accent marks. These are deliberately placed to match where the analogous controls go on Mac OS.
   [_FUNCTION] = LAYOUT_eighty_m80h(
-    KC_ESC,  KC_P1,   KC_P2,   KC_P3,   KC_P4,   KC_P5,   KC_P6,   KC_P7,   KC_P8,   KC_P9,   KC_P10,   KC_P11,     KC_P12,     _______,    _______, _______, RESET,
+    KC_GESC, KC_F13,  KC_F14,  KC_F15,  KC_F16,  KC_F17,  KC_F18,  KC_F19,  KC_F20,  KC_F21,  KC_F22,   KC_F23,     KC_F24,     _______,    _______, _______, RESET,
     KC_CGRV, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,  _______,    _______,                _______, _______, _______,
     _______, _______, _______, KC_CAGU, _______, _______, _______, KC_CDIA, KC_CCIR, _______, _______,  _______,    _______,    _______,    _______, _______, _______,
     _______, _______, _______, UC_M_OS, UC_M_LN, UC_M_WI, UC_M_BS, UC_M_WC, _______, _______, _______,  _______,    _______,
@@ -336,7 +336,7 @@ bool process_key_after_accent(
     // Pick the correct array. Because this is progmem, we're going to need to do the
     // two-dimensional array indexing by hand, and so we just cast it to a single-dimensional array.
     const uint16_t *points = (const uint16_t*)(is_shifted ? shifted_accents : unshifted_accents);
-    const uint16_t code_point = pgm_read_word_near(points + KC_NUM_ACCENTS * keycode + accent_index);
+    const uint16_t code_point = pgm_read_word(points + KC_NUM_ACCENTS * keycode + accent_index);
     if (code_point) {
       register_unicode(code_point);
       return true;
@@ -345,7 +345,7 @@ bool process_key_after_accent(
 
   // If we get here, there was no accent match. Emit the accent as its own character, and then let
   // the caller figure out what to do next.
-  register_unicode(pgm_read_word_near(uncombined_accents + accent_index));
+  register_unicode(pgm_read_word(uncombined_accents + accent_index));
   return false;
 }
 
@@ -478,7 +478,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (keycode >= KC_ACCENT_START && keycode < KC_ACCENT_END && record->event.pressed) {
     if (shifted) {
       // Shift + accent request generates the combining accent key, and leaves accent_request alone.
-      register_unicode(pgm_read_word_near(combined_accents + keycode - KC_ACCENT_START));
+      register_unicode(pgm_read_word(combined_accents + keycode - KC_ACCENT_START));
       return false;
     } else {
       accent_request = keycode;
