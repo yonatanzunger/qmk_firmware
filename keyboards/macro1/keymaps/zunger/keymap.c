@@ -17,10 +17,9 @@
 #include QMK_KEYBOARD_H
 
 #define NUMPAD 0
-#define NAVPAD 1
-#define UNUSED 2
+#define FUNCTIONS 1
 
-#define TOGGLE TG(NAVPAD)
+#define TOGGLE TG(FUNCTIONS)
 
 /* 
  * ┌───┐   ┌───┬───┐ 
@@ -41,39 +40,62 @@
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
+  // NB: KC_MINUS is taken over for tap-dance controls, so that 5 hits on it
+  // resets the keyboard. (We have to use a basic keycode for this, not a
+  // custom one)
 	[NUMPAD] = LAYOUT_numpad(
 		KC_MPLY, KC_MPRV,     KC_MNXT, 
-		TOGGLE,  KC_KP_SLASH, KC_KP_ASTERISK, KC_KP_MINUS, 
+		TOGGLE,  KC_KP_SLASH, KC_KP_ASTERISK, TD(KC_MINUS), 
 		KC_KP_7, KC_KP_8,     KC_KP_9,        KC_KP_PLUS, 
 		KC_KP_4, KC_KP_5,     KC_KP_6, 
 		KC_KP_1, KC_KP_2,     KC_KP_3,        KC_KP_ENTER, 
 		KC_KP_0, KC_KP_DOT),
 
-	[NAVPAD] = LAYOUT_numpad(
+  // This layer will send ctrl+Fxx
+	[FUNCTIONS] = LAYOUT_numpad(
 		KC_TRNS, KC_TRNS, KC_TRNS, 
-		TOGGLE,  XXXXXXX, XXXXXXX, XXXXXXX, 
-		KC_HOME, KC_MS_U, KC_PGUP, KC_BTN2, 
-		KC_MS_L, XXXXXXX, KC_MS_R, 
-		KC_END,  KC_MS_D, KC_PGDN, KC_BTN1, 
-		XXXXXXX, XXXXXXX),
-
-	[UNUSED] = LAYOUT_numpad(
+		KC_TRNS, XXXXXXX, XXXXXXX, KC_TRNS, 
+		KC_TRNS, KC_TRNS, KC_TRNS, XXXXXXX, 
 		KC_TRNS, KC_TRNS, KC_TRNS, 
-		KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, 
-		KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, 
-		KC_TRNS, KC_TRNS, KC_TRNS, 
-		KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, 
-		KC_TRNS, KC_TRNS),
+		KC_TRNS, KC_TRNS, KC_TRNS, KC_KP_ENTER, 
+		KC_TRNS, XXXXXXX),
 };
 
+void magic_minus(qk_tap_dance_state_t *state, void *user_data) {
+    if (state->count >= 5) {
+      reset_tap_dance(state);
+      reset_keyboard();
+    } else if (IS_LAYER_ON(NUMPAD)) {
+      register_code(KC_KP_MINUS);
+      unregister_code(KC_KP_MINUS);
+    }
+    // In function mode, the MINUS key is silent.
+}
+
+qk_tap_dance_action_t tap_dance_actions[] = {
+  [KC_MINUS] = ACTION_TAP_DANCE_FN(magic_minus),
+};
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
     if (index == 0) { /* First encoder */
-        if (IS_LAYER_ON(NAVPAD)) {
-          tap_code(clockwise ? KC_MS_WH_DOWN : KC_MS_WH_UP);
-        } else {
-          tap_code(clockwise ? KC_VOLU : KC_VOLD);
-        }
+        tap_code(clockwise ? KC_VOLU : KC_VOLD);
     } 
     return false; 
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (record->event.pressed &&
+        IS_LAYER_ON(FUNCTIONS) && (
+        keycode >= KC_KP_1 &&
+        keycode <= KC_KP_0
+    )) {
+      register_code(KC_LGUI);
+      register_code(KC_LCTL);
+      register_code(keycode);
+      unregister_code(keycode);
+      unregister_code(KC_LCTL);
+      unregister_code(KC_LGUI);
+      return false;
+    }
+    return true;
 }
