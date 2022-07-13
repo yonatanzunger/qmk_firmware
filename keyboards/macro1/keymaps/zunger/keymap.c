@@ -16,8 +16,8 @@
 
 #include QMK_KEYBOARD_H
 
-#define NUMPAD 0
-#define FUNCTIONS 1
+#define NUMPAD 1
+#define FUNCTIONS 0
 
 #define TOGGLE TG(FUNCTIONS)
 
@@ -39,12 +39,9 @@
  */
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-
-  // NB: KC_MINUS is taken over for tap-dance controls, so that 5 hits on it
-  // resets the keyboard. (We have to use a basic keycode for this, not a
-  // custom one)
-	[NUMPAD] = LAYOUT_numpad(
-		KC_MPLY, KC_MPRV,     KC_MNXT, 
+  // The default layer sends ctrl+Fxx; the numpad layer just acts like a numpad.
+	[FUNCTIONS] = LAYOUT_numpad(
+		KC_MPLY, KC_PGUP,     KC_PGDN, 
 		TOGGLE,  KC_KP_SLASH, KC_KP_ASTERISK, TD(KC_MINUS), 
 		KC_KP_7, KC_KP_8,     KC_KP_9,        KC_KP_PLUS, 
 		KC_KP_4, KC_KP_5,     KC_KP_6, 
@@ -52,13 +49,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		KC_KP_0, KC_KP_DOT),
 
   // This layer will send ctrl+Fxx
-	[FUNCTIONS] = LAYOUT_numpad(
+	[NUMPAD] = LAYOUT_numpad(
 		KC_TRNS, KC_TRNS, KC_TRNS, 
-		KC_TRNS, XXXXXXX, XXXXXXX, KC_TRNS, 
-		KC_TRNS, KC_TRNS, KC_TRNS, XXXXXXX, 
+		KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, 
+		KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, 
 		KC_TRNS, KC_TRNS, KC_TRNS, 
-		KC_TRNS, KC_TRNS, KC_TRNS, KC_KP_ENTER, 
-		KC_TRNS, XXXXXXX),
+		KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, 
+		KC_TRNS, KC_TRNS),
 };
 
 void magic_minus(qk_tap_dance_state_t *state, void *user_data) {
@@ -78,7 +75,7 @@ qk_tap_dance_action_t tap_dance_actions[] = {
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
     if (index == 0) { /* First encoder */
-        tap_code(clockwise ? KC_VOLU : KC_VOLD);
+        tap_code(clockwise ? KC_MS_WH_DOWN : KC_MS_WH_UP);
     } 
     return false; 
 }
