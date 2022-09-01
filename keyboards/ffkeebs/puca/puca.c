@@ -143,6 +143,9 @@ bool oled_task_kb(void) {
         case 1:
             oled_write_P(PSTR("FUNC\n"), false);
             break;
+        case 2:
+            oled_write_P(PSTR("NAV\n"), false);
+            break;
     }
     return true;
 }
