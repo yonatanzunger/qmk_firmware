@@ -409,6 +409,7 @@ int update_layer(
   bool shifted
 ) {
   int current_layer = layer_lock;
+  layer_state_t language_layers = 0;
 
   // If there's a layer select being held right now, then it updates the current layer.
   // (If it's the layer select for the currently locked layer, then instead it's a toggle
@@ -417,15 +418,18 @@ int update_layer(
     current_layer = (layer_lock == layer_select_held ? _QWERTY : layer_select_held);
   }
 
+  language_layers |= (1UL << current_layer);
+
   // If we're shifted (with either shift or caps lock), and we're in one of our special
   // layers, bump up to the SHIFTED version of that layer. We don't do this for QWERTY;
   // there we just emit USB HID codes and let the host deal with shift.
   if (shifted && current_layer != _QWERTY) {
     ++current_layer;
+    language_layers |= (1UL << current_layer);
   }
 
   // Update the QMK layer state by stomping just the language layer bits.
-  const layer_state_t new_layer_state = (layer_state & NON_LANGUAGE_LAYERS) | (1UL << current_layer);
+  const layer_state_t new_layer_state = (layer_state & NON_LANGUAGE_LAYERS) | language_layers;
   if (new_layer_state != layer_state) {
     layer_state_set(new_layer_state);
   }
