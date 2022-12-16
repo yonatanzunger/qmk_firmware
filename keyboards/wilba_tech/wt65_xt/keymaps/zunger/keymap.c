@@ -144,25 +144,27 @@ enum custom_keycodes {
 enum layers_keymap {
   _QWERTY = 0,
 
-  // Yiddish should go first, so that it can be transparent down to QWERTY. That's because it's
-  // intended to be used in layer-lock mode, while Greek and Cadet aren't.
-  // (Really, _YIDDISH, _GREEK, _CADET, and _FUNCTION should each parent to _QWERTY)
-  _YIDDISH,
+  _FIRST_LANGUAGE_LAYER,
+  _YIDDISH = _FIRST_LANGUAGE_LAYER,
   _SHIFTYIDDISH,
   _GREEK,
   _SHIFTGREEK,
   _CADET,
   _SHIFTCADET,
+  _LAST_LANGUAGE_LAYER,
 
   // Function goes last.
-  _FUNCTION,
+  _FUNCTION = _LAST_LANGUAGE_LAYER,
 };
 
+// We manage our OS mode internally, and store it in a static, rather than EEPROM, bit. That's
+// because it changes as we flip machines, and there's no good reason to wear out the memory.
 enum os_modes {
   _WINDOWS = 0,
   _MAC = 1,
   _OS_MODES_MAX = 2,
 };
+static int os_mode = _MAC;
 
 // Key types matter for accent handling. If there's a pending accent request and another key is
 // pressed:
@@ -255,7 +257,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		KC_TRNS,  KC_TRNS,    KC_TRNS, H(05d6), H(05e6), H(05db), H(05f0), H(05d1), H(05e0), H(05de), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                   KC_TRNS, KC_TRNS,
 		KC_TRNS,  KC_TRNS,    KC_TRNS, KC_TRNS, KC_TRNS,                            KC_TRNS,                                     KC_TRNS,          KC_TRNS, KC_TRNS, KC_TRNS),
 	[_SHIFTYIDDISH] = LAYOUT_all(
-		KC_TRNS,  KC_TRNS,    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                   KC_TRNS,
+		KC_TRNS,  KC_TRNS,    H(05f4), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                   KC_TRNS,
 		KC_TRNS,  KC_TRNS,    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, H(fb4a), H(fb1f), H(05f1), KC_TRNS, H(fb2f), H(05e3), KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS,
     KC_TRNS,  KC_TRNS,    KC_TRNS, H(fb2e), H(05ea), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, H(fb4d), H(05da), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS,
 		KC_TRNS,  KC_TRNS,    KC_TRNS, KC_TRNS, H(05e5), H(05da), H(fb4c), KC_TRNS, H(05df), H(05dd), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                   KC_TRNS, KC_TRNS,
@@ -396,13 +398,9 @@ bool process_key_after_accent(
   return false;
 }
 
-// Layer bitfields.
-#define GREEK_LAYER (1UL << _GREEK)
-#define SHIFTGREEK_LAYER (1UL << _SHIFTGREEK)
-#define CADET_LAYER (1UL << _CADET)
-#define SHIFTCADET_LAYER (1UL << _SHIFTCADET)
-// The layers we don't touch.
-#define LAYER_MASK ~(GREEK_LAYER|SHIFTGREEK_LAYER|CADET_LAYER|SHIFTCADET_LAYER)
+// This is a bitmask which selects the activation bits for layers *other* than our language
+// selectors.
+#define NON_LANGUAGE_LAYERS ~(((1UL << _LAST_LANGUAGE_LAYER) - 1) - ((1UL << _FIRST_LANGUAGE_LAYER) - 1))
 
 // Update the current layer state and return the layer we're in.
 int update_layer(
@@ -426,13 +424,31 @@ int update_layer(
     ++current_layer;
   }
 
-  // Update the QMK layer state.
-  layer_state_t new_layer_state = (layer_state & LAYER_MASK) | (1UL << current_layer);
+  // Update the QMK layer state by stomping just the language layer bits.
+  const layer_state_t new_layer_state = (layer_state & NON_LANGUAGE_LAYERS) | (1UL << current_layer);
   if (new_layer_state != layer_state) {
     layer_state_set(new_layer_state);
   }
 
   return current_layer;
+}
+
+void set_os_mode(int new_mode) {
+  os_mode = new_mode;
+  // NB: We set unicode_config.input_mode directly, rather than calling
+  // set_unicode_input_mode, because we don't want to persist this and so we shouldn't put
+  // extra load on the EEPROMs.
+  unicode_config.input_mode = (os_mode == _MAC ? UC_MAC : UC_WINC);
+  // This would be a great moment for some auditory or visual feedback, but this keyboard
+  // doesn't support it. :(
+}
+
+void toggle_os_mode(void) {
+  set_os_mode((os_mode + 1) % _OS_MODES_MAX);
+}
+
+void keyboard_post_init_user() {
+  set_os_mode(_WINDOWS);
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -449,7 +465,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   static int next_layer_lock = _QWERTY;  // Used when layer_lock is held
   // Which layer select key is currently being held down. _QWERTY is equivalent to "none."
   static int layer_select_held = _QWERTY; 
-  static int os_mode = _MAC;
 
   // When the hold on the platform key started
   static uint16_t platform_hold_start = 0;
@@ -569,16 +584,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case KC_PLATFORM:
       if (record->event.pressed) {
         platform_hold_start = record->event.time;
-      } else {
-        if (platform_hold_start != 0 && record->event.time - platform_hold_start > PLATFORM_HOLD_DURATION) {
-          os_mode = (os_mode + 1) % _OS_MODES_MAX;
-          // NB: We set unicode_config.input_mode directly, rather than calling
-          // set_unicode_input_mode, because we don't want to persist this and so we shouldn't put
-          // extra load on the EEPROMs.
-          unicode_config.input_mode = (os_mode == _MAC ? UC_MAC : UC_WINC);
-          // This would be a great moment for some auditory or visual feedback, but this keyboard
-          // doesn't support it. :(
-        }
+      } else if (platform_hold_start != 0 && record->event.time - platform_hold_start > PLATFORM_HOLD_DURATION) {
+        toggle_os_mode();
       }
       key_type = _SPECIAL_KEY;
       return true;
