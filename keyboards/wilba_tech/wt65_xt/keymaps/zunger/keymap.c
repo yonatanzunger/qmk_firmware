@@ -257,9 +257,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		KC_TRNS,  KC_TRNS,    KC_TRNS, H(05d6), H(05e6), H(05db), H(05f0), H(05d1), H(05e0), H(05de), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                   KC_TRNS, KC_TRNS,
 		KC_TRNS,  KC_TRNS,    KC_TRNS, KC_TRNS, KC_TRNS,                            KC_TRNS,                                     KC_TRNS,          KC_TRNS, KC_TRNS, KC_TRNS),
 	[_SHIFTYIDDISH] = LAYOUT_all(
-		KC_TRNS,  KC_TRNS,    H(05f4), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                   KC_TRNS,
+		KC_TRNS,  KC_TRNS,    H(05f4), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS,
 		KC_TRNS,  KC_TRNS,    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, H(fb4a), H(fb1f), H(05f1), KC_TRNS, H(fb2f), H(05e3), KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS,
-    KC_TRNS,  KC_TRNS,    KC_TRNS, H(fb2e), H(05ea), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, H(fb4d), H(05da), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS,
+    KC_TRNS,  KC_TRNS,    KC_TRNS, H(fb2e), H(05ea), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, H(fb4d), H(05da), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                   KC_TRNS,
 		KC_TRNS,  KC_TRNS,    KC_TRNS, KC_TRNS, H(05e5), H(05da), H(fb4c), KC_TRNS, H(05df), H(05dd), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                   KC_TRNS, KC_TRNS,
 		KC_TRNS,  KC_TRNS,    KC_TRNS, KC_TRNS, KC_TRNS,                            KC_TRNS,                                     KC_TRNS,          KC_TRNS, KC_TRNS, KC_TRNS),
 	[_GREEK] = LAYOUT_all(
